@@ -29,6 +29,12 @@ def multi_mutate(ind, num_mutations=2):
             position = int(random() * len(ind))
             new_move = validMoves[int(random() * len(validMoves))]
             ind[position] = new_move
+
+    # Check if there are any duplicate moves
+    for i in range(len(ind)):
+        if ind[i] == ind[(i + 1) % len(ind)]:
+            ind[i] = validMoves[int(random() * len(validMoves))]
+
     return ind,
 
 
@@ -71,7 +77,7 @@ def evoAlgorithm(verbose=False):
     stats.register("max", np.max)
     stats.register("median", np.median)
 
-    population, logbook = algorithms.eaSimple(population, toolbox, cxpb=0.1, mutpb=0.4, ngen=100, stats=stats,
+    population, logbook = algorithms.eaSimple(population, toolbox, cxpb=0.55, mutpb=0.3, ngen=100, stats=stats,
                                               halloffame=hof, verbose=verbose)
 
     return population, logbook, hof

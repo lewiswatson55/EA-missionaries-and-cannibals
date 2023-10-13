@@ -33,6 +33,8 @@ def play(move, fitness, double=False, skip_check=False):
     global right
     global left
 
+    #print(f"Move: {move}, Fitness: {fitness}")
+
     if len(move) == 1:
         if boat == "R" and move in right:
             right.remove(move)
@@ -64,6 +66,8 @@ def play(move, fitness, double=False, skip_check=False):
 def testInd(ind):
     global right
     global left
+
+    #print(ind)
 
     right = ["C"] * 3 + ["M"] * 3
     left = []
