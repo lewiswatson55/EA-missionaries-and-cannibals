@@ -7,20 +7,30 @@ matplotlib.use('TkAgg')  # Or you can use 'Agg', 'Qt5Agg', etc.
 import matplotlib.pyplot as plt
 import numpy as np
 
-moves = ["C", "M", "CC", "MM", "CM"]
+validMoves = ["C", "M", "CC", "MM", "CM"]
 
 
 # Generate a random individual of length 11 made up of valid moves
 def randInd():
     ind = []
     for i in range(11):
-        ind.append(moves[int(random() * len(moves))])
+        ind.append(validMoves[int(random() * len(validMoves))])
     return ind
 
 
 def mutate(ind):
-    ind[int(random() * len(ind))] = moves[int(random() * len(moves))]
+    ind[int(random() * len(ind))] = validMoves[int(random() * len(validMoves))]
     return ind,
+
+
+def multi_mutate(ind, num_mutations=2):
+    for _ in range(num_mutations):
+        if random() < 0.7:  # 70% chance to mutate
+            position = int(random() * len(ind))
+            new_move = validMoves[int(random() * len(validMoves))]
+            ind[position] = new_move
+    return ind,
+
 
 
 def detailInd(ind):
@@ -47,9 +57,9 @@ def evoAlgorithm(verbose=False):
 
     toolbox.register("mate", tools.cxTwoPoint)
 
-    toolbox.register("mutate", mutate)
+    toolbox.register("mutate", multi_mutate)
 
-    toolbox.register("select", tools.selTournament, tournsize=5)
+    toolbox.register("select", tools.selTournament, tournsize=3)
 
     population = toolbox.population(n=600)
     hof = tools.HallOfFame(1)
@@ -61,7 +71,7 @@ def evoAlgorithm(verbose=False):
     stats.register("max", np.max)
     stats.register("median", np.median)
 
-    population, logbook = algorithms.eaSimple(population, toolbox, cxpb=0.7, mutpb=0.9, ngen=50, stats=stats,
+    population, logbook = algorithms.eaSimple(population, toolbox, cxpb=0.1, mutpb=0.4, ngen=100, stats=stats,
                                               halloffame=hof, verbose=verbose)
 
     return population, logbook, hof

@@ -34,27 +34,23 @@ def play(move, fitness, double=False, skip_check=False):
     global left
 
     if len(move) == 1:
-        if boat == "R":
-            if move in right:
-                right.remove(move)
-                left.append(move)
-                if not double:
-                    moveBoat()
-                    fitness += 1
-            else:
-                fitness -= 5
+        if boat == "R" and move in right:
+            right.remove(move)
+            left.append(move)
+            if not double:
+                moveBoat()
+                fitness += 1
+        elif boat == "L" and move in left:
+            left.remove(move)
+            right.append(move)
+            if not double:
+                moveBoat()
+                fitness += 1
         else:
-            if move in left:
-                left.remove(move)
-                right.append(move)
-                if not double:
-                    moveBoat()
-                    fitness += 1
-            else:
-                fitness -= 5
+            fitness -= 5  # Penalty for invalid move
     else:
-        play(move[0], fitness, double=True, skip_check=True)
-        play(move[1], fitness, double=True, skip_check=True)
+        fitness = play(move[0], fitness, double=True, skip_check=True)  # capture returned fitness
+        fitness = play(move[1], fitness, double=True, skip_check=True)  # capture returned fitness
         moveBoat()
         fitness += 1
 
@@ -62,6 +58,7 @@ def play(move, fitness, double=False, skip_check=False):
         fitness = checkEaten(fitness)
 
     return fitness
+
 
 
 def testInd(ind):
@@ -77,6 +74,11 @@ def testInd(ind):
         fitness = play(move, fitness)
         #print(f"Move: {move}, Fitness: {fitness}")
 
+    # Check for redundant moves, i.e. moving the boat back and forth
+    for i in range(len(ind) - 1):
+        if ind[i] == ind[i + 1]:
+            fitness -= 10
+
     if len(left) != 6:
         fitness -= 3
 
@@ -86,7 +88,7 @@ def testInd(ind):
 
 
 
-#winner = ["CC", "C", "CC", "C", "MM", "MC", "MM", "C", "CC", "C", "CC"]
+winner = ["CC", "C", "CC", "C", "MM", "MC", "MM", "C", "CC", "C", "CC"]
 
 #ind = randInd()
-#testInd(winner)
+#print(testInd(winner))
